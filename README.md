@@ -4,7 +4,7 @@
 
 
 ## javascript相关
-[js相关知识整理](https://github.com/ferrydjing/frontend-kownledge/js.md)
+[js相关知识整理](https://github.com/ferrydjing/frontend-kownledge/blob/master/js.md)
 
 ## css相关
-[css相关知识整理](https://github.com/ferrydjing/frontend-kownledge/css.md)
+[css相关知识整理](https://github.com/ferrydjing/frontend-kownledge/blob/master/css.md)
