@@ -81,8 +81,6 @@ html {
 
 # css 居中
 
-## 元素固定宽高
-
 ```html
 <div class="container">
   <div class="box size">aasdasd</div>
