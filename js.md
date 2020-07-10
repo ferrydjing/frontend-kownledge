@@ -58,27 +58,6 @@ p.constructor === Person // true
 p.constructor === Object // false
 ```
 
-2. new 的实现
-
-```javascript
-function create() {
-  var obj = new Object()
-  var args = [].shift.call(arguments)
-  obj.__proto__ = args.prototype
-
-  var ret = args.apply(obj, arguments)
-  return ret instanceof Object ? ret : obj
-}
-
-function Car(color) {
-  this.color = color
-}
-
-var p = create(Car, 'red')
-console.log(p)
-console.log(p.color)
-```
-
 3. 原型链
 
    每个对象都有原型对象，通过`__proto__`指向上一个原型，原型对象也能拥有原型，一层一层最终指向 null,这个就是原型链
@@ -102,7 +81,110 @@ function add(a) {
 
 # 继承
 
+```javascript
+// 公共代码
+function Parent() {
+  this.name = 'Tom'
+}
+Parent.prototype.sayhi = function () {
+  console.log(this.name + ' say hi')
+}
+```
+
+1. 原型链继承
+
+```javascript
+function Child() {}
+
+Child.prototype = new Parent()
+
+var child = new Child()
+child.sayhi() // Tom say hi
+
+问题：
+   1. 引用类型的属性被所有实例共享
+   2. 创建child时不能给parent传参
+   3. child的constructor指向Parent而不是Child
+```
+
+2. 利用构造函数
+
+   避免了 parent 属性被所有实例共享的问题， 且可以给 Parent 传参
+
+```javascript
+function Child() {
+  Parent.call(this)
+}
+```
+
+缺点：
+
+- child 实例不能继承 Parent 原型链中的属性，方法
+
+3. 组合
+
+方法一：
+
+```javascript
+function Child() {
+  Parent.call(this)
+}
+Child.prototype = Parent.prototype
+Child.prototype.constructor = Child
+```
+
+方法二：
+
+```javascript
+function Parent(name) {
+  this.name = name
+}
+Parent.prototype.sayhi = function () {
+  console.log(this.name + ' say hi')
+}
+function object(o) {
+  function f() {}
+  f.prototype = o
+  return new f()
+}
+
+function prototype(child, parent) {
+  var prototype = object(parent.prototype)
+  prototype.constructor = child
+  child.prototype = prototype
+}
+
+function Child(age, name) {
+  this.age = age
+  Parent.call(this, name)
+}
+prototype(Child, Parent)
+var child = new Child(1, 'Sam')
+```
+
 # new this
+
+模拟 new
+
+```javascript
+function create() {
+  var obj = new Object()
+  console.log(arguments)
+  var args = [].shift.call(arguments)
+  obj.__proto__ = args.prototype
+  console.log(args)
+  var ret = args.apply(obj, arguments)
+  return ret instanceof Object ? ret : obj
+}
+
+function Car(color) {
+  this.color = color
+}
+
+var p = create(Car, 'red')
+console.log(p)
+console.log(p.color)
+```
 
 # call apply bind
 
@@ -148,3 +230,16 @@ Array.prototype.unique = function () {
 ```
 
 # es6
+
+# 判断类型
+
+```javascript
+var a = [1, 2, 2]
+Object.prototype.toString.call(a) // [object Array]
+
+var b = { a: 1 }
+Object.prototype.toString.call(b) // [object Object]
+
+var c = 1
+Object.prototype.toString.call(c) // [object Number]
+```
