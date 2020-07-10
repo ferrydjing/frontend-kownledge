@@ -164,27 +164,49 @@ var child = new Child(1, 'Sam')
 
 # new this
 
-模拟 new
+全局默认 this 指向 window， 函数中则看调用的位置， 全局调用指向 widnow(严格模式下为 undefined)
 
-```javascript
-function create() {
-  var obj = new Object()
-  console.log(arguments)
-  var args = [].shift.call(arguments)
-  obj.__proto__ = args.prototype
-  console.log(args)
-  var ret = args.apply(obj, arguments)
-  return ret instanceof Object ? ret : obj
-}
+1. 模拟 new
 
-function Car(color) {
-  this.color = color
-}
+   ```javascript
+   function create() {
+     var obj = new Object()
+     console.log(arguments)
+     var args = [].shift.call(arguments)
+     obj.__proto__ = args.prototype
+     console.log(args)
+     var ret = args.apply(obj, arguments)
+     return ret instanceof Object ? ret : obj
+   }
 
-var p = create(Car, 'red')
-console.log(p)
-console.log(p.color)
-```
+   function Car(color) {
+     this.color = color
+   }
+
+   var p = create(Car, 'red')
+   console.log(p)
+   console.log(p.color)
+   ```
+
+2. 模拟 bind
+
+   ```javascript
+   ```
+
+3. 模拟 apply 和 call
+   ```javascript
+   ```
+
+## 箭头函数
+
+如果箭头函数被非箭头函数调用，则 this 继承至调用它的非箭头函数， 如果是全局调用则为 window 对象
+
+需要注意的点：
+
+1. 没有自己的 this、arguments
+2. 没有原型
+3. 不能改变 this 的指向
+4. 不能使用 new 来调用
 
 # call apply bind
 
