@@ -191,10 +191,88 @@ var child = new Child(1, 'Sam')
 2. 模拟 bind
 
    ```javascript
+   // 实现一
+   Function.prototype.bindFn = function bind(thisArg) {
+     if (typeof this !== 'function') {
+       throw new TypeError(this + ' must be  a function')
+     }
+     var self = this
+     var args = [].slice.call(arguments, 1)
+
+     var bound = function () {
+       var boundArgs = [].slice.call(arguments)
+       return self.apply(thisArg, args.concat(boundArgs))
+     }
+
+     return bound
+   }
+   // 最终版本
+   Function.prototype.bindFn = function bind(thisArg) {
+     if (typeof this !== 'function') {
+       throw new TypeError(this + ' must be  a function')
+     }
+     var self = this
+     var args = [].slice.call(arguments, 1)
+
+     var bound = function () {
+       var boundArgs = [].slice.call(arguments)
+       var finalArgs = args.concat(boundArgs)
+       if (!new.target) {
+         return self.apply(thisArg, finalArgs)
+       } else {
+         if (self.prototype) {
+           function Empty() {}
+           Empty.prototype = self.prototype
+           bound.prototype = new Empty()
+         }
+
+         var result = self.apply(thisArg, finalArgs)
+         var isObject = typeof result === 'object' && result !== null
+         var isFn = typeof resuld === 'function'
+         if (isObject || isFn) {
+           return result
+         }
+         return this
+       }
+     }
+
+     return bound
+   }
    ```
 
 3. 模拟 apply 和 call
+
+   apply 和 call 除了接受参数不同，其功能是一致的
+
    ```javascript
+   // apply实现
+   function getGlobalObject() {
+     return this
+   }
+   Function.prototype.applyFn = function apply(thisArg, argsArray) {
+     if (typeof this !== 'function') {
+       throw new TypeError(this + ' is not a function')
+     }
+
+     if (typeof argsArray === 'undefined' || argsArray === null) {
+       argsArray = []
+     }
+
+     if (argsArray !== new Object(argsArray)) {
+       throw new TypeError('CreateListFromArrayLike called on non-object')
+     }
+
+     if (typeof thisArg === 'undefined' || thisArg === null) {
+       thisArg = getGlobalObject()
+     }
+
+     thisArg = new Object(thisArg)
+     var __fn = '__fn'
+     thisArg[__fn] = this
+     var result = thisArg[__fn](...argsArray)
+     delete thisArg[__fn]
+     return result
+   }
    ```
 
 ## 箭头函数
@@ -208,19 +286,99 @@ var child = new Child(1, 'Sam')
 3. 不能改变 this 的指向
 4. 不能使用 new 来调用
 
-# call apply bind
-
 # promise
+
+1.  解决回调问题
+2.  并发请求
+3.  解决异步问题
+
+    ```javascript
+    class Promise {
+      constructor(executor) {
+        // 初始化 state 为等待态
+        this.state = 'pending'
+        // 成功的值
+        this.value = undefined
+        // 失败的原因
+        this.reason = undefined
+        let resolve = (value) => {
+          // state 改变,resolve 调用就会失败
+          if (this.state === 'pending') {
+            // resolve 调用后，state 转化为成功态
+            this.state = 'fulfilled'
+            // 储存成功的值
+            this.value = value
+          }
+        }
+        let reject = (reason) => {
+          // state 改变,reject 调用就会失败
+          if (this.state === 'pending') {
+            // reject 调用后，state 转化为失败态
+            this.state = 'rejected'
+            // 储存失败的原因
+            this.reason = reason
+          }
+        }
+        // 如果 executor 执行报错，直接执行 reject
+        try {
+          executor(resolve, reject)
+        } catch (err) {
+          reject(err)
+        }
+      }
+    }
+    ```
 
 # 浏览器缓存机制
 
+1. 强缓存
+2. 协商缓存
+
 # 浏览器渲染原理
+
+重排和重绘
+
+- 增加、删除或者修改`DOM`节点
+- 移动`DOM`,开始动画
+- 修改`css`，改变大小、位置时，或者`display：none`时候触发重排，修改颜色等为重绘
+- 修改网页的默认字体时。
+- Resize 窗口的时候（移动端没有这个问题），或是滚动的时候。
+- 内容的改变，(用户在输入框中写入内容也会)。
+- 激活伪类，如:hover。
+- 计算 offsetWidth 和 offsetHeight。
 
 # 函数式编程
 
 # HTML5 Web Worker
 
+用途
+
+1. 懒加载
+2. 数据处理，分析
+3. canvas 图形绘制
+
+注意的地方
+
+1. 无法访问`DOM`
+2. 同源限制
+3. 没有`window`
+
+```javascript
+var worker = new Worker('worker.js')
+```
+
 # Service Worker
+
+# 事件（捕获和冒泡）
+
+window.onerror
+
+window.addeventlistener('error', (error) => {
+console.log(error)
+}, true)
+
+捕获事件流是由父->子的过程
+冒泡则是由子->父的过程
 
 # 数据处理
 
@@ -249,6 +407,54 @@ Array.prototype.unique = function () {
   return Array.from(new Set(this))
   return [...new Set(this)]
 }
+```
+
+2. 节流
+
+```javascript
+// 思路：在规定时间内只触发一次
+function throttle(fn, delay) {
+  // 利用闭包保存时间
+  let prev = Date.now()
+  return function () {
+    let context = this
+    let arg = arguments
+    let now = Date.now()
+    if (now - prev >= delay) {
+      fn.apply(context, arg)
+      prev = Date.now()
+    }
+  }
+}
+
+function fn() {
+  console.log('节流')
+}
+addEventListener('scroll', throttle(fn, 1000))
+```
+
+3. 防抖
+
+```javascript
+// 思路:在规定时间内未触发第二次，则执行
+function debounce(fn, delay) {
+  // 利用闭包保存定时器
+  let timer = null
+  return function () {
+    let context = this
+    let arg = arguments
+    // 在规定时间内再次触发会先清除定时器后再重设定时器
+    clearTimeout(timer)
+    timer = setTimeout(function () {
+      fn.apply(context, arg)
+    }, delay)
+  }
+}
+
+function fn() {
+  console.log('防抖')
+}
+addEventListener('scroll', debounce(fn, 1000))
 ```
 
 # es6
