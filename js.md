@@ -471,3 +471,41 @@ Object.prototype.toString.call(b) // [object Object]
 var c = 1
 Object.prototype.toString.call(c) // [object Number]
 ```
+
+# vue 相关
+
+1. 双向绑定
+
+   2.0 使用 defineproperty
+
+   ```javascript
+   var obj = {
+     txt: ''
+   }
+   Object.defineProperty(obj, 'txt', {
+     get: function () {
+       console.log('get val')
+     },
+     set: function (value) {
+       console.log('set value', value)
+       document.querySelector('#res').innerHTML = value
+     }
+   })
+   ```
+
+   3.0 使用 proxy
+
+   ```javascript
+   var obj2 = {
+     name: ''
+   }
+   var p = new Proxy(obj2, {
+     get() {
+       console.log('proxy get')
+     },
+     set(obj, prop, val) {
+       console.log('proxy set', obj, prop, val)
+       document.querySelector('#res').innerHTML = val
+     }
+   })
+   ```
