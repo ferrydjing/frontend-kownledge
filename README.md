@@ -10,6 +10,10 @@
 
 [css 相关知识整理](https://github.com/ferrydjing/frontend-kownledge/blob/master/css.md)
 
+## 手写代码相关
+
+[手写代码相关](https://github.com/ferrydjing/frontend-kownledge/blob/master/code.md)
+
 # 前端性能优化
 
 - dns 预加载
