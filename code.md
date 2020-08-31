@@ -158,3 +158,71 @@ const canCompleteCircuit = (gas, cost) => {
   return -1
 }
 ```
+
+## 链表
+
+```js
+class Node {
+  constructor(key, value) {
+    this.key = key
+    this.value = value
+    this.next = null
+  }
+}
+
+class LinkList {
+  head = null
+
+  constructor() {}
+
+  insert(key, value, nodeKey) {
+    let newNode = new Node(key, value)
+    let node = this.find(nodeKey)
+    if (node) {
+      newNode.next = node.next
+      node.next = newNode
+    } else {
+      let cur = this.head
+      while (cur.next) {
+        cur = cur.next
+      }
+      cur.next = newNode
+    }
+  }
+
+  remove(key) {
+    let node = this.find(key)
+    if (node) {
+      let preNode = this.findPrev(key)
+      preNode.next = node.next
+    }
+  }
+
+  find(key) {
+    let cur = this.head.next
+    while (cur) {
+      if (cur.key === key) {
+        return cur
+      }
+    }
+
+    return null
+  }
+
+  findPrev(key) {
+    let cur = this.head
+    while (cur.next && cur.next.key !== key) {
+      cur = cur.next
+    }
+    return cur
+  }
+
+  dispay() {
+    let cur = this.head.next
+    while (cur) {
+      console.log(cur.key, cur.value)
+      cur = cur.next
+    }
+  }
+}
+```
