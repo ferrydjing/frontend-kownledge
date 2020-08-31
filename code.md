@@ -173,7 +173,9 @@ class Node {
 class LinkList {
   head = null
 
-  constructor() {}
+  constructor() {
+    this.head = new Node('head')
+  }
 
   insert(key, value, nodeKey) {
     let newNode = new Node(key, value)
@@ -204,8 +206,8 @@ class LinkList {
       if (cur.key === key) {
         return cur
       }
+      cur = cur.next
     }
-
     return null
   }
 
@@ -225,4 +227,10 @@ class LinkList {
     }
   }
 }
+```
+
+## 双向链表
+
+```js
+class Node {}
 ```
