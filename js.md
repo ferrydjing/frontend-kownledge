@@ -509,3 +509,26 @@ Object.prototype.toString.call(c) // [object Number]
      }
    })
    ```
+
+# Object
+
+JavaScript 提供了一个内部数据结构，用来描述对象的属性，控制它的行为，比如该属性是否可写、可遍历等等。这个内部数据结构称为“属性描述对象”（attributes object）。每个属性都有自己对应的属性描述对象，保存该属性的一些元信息。
+
+1. value, 属性值，默认为 undefined
+2. writable,表示属性值（value）是否可改变（即是否可写）
+3. enumerable, 表示属性是否可枚举（for in）
+4. configable, 表示该属性是否可以被删除
+5. get, 该属性取值函数，默认为 undefined
+6. set, 该属性存值函数，默认为 undefined
+
+## Object.seal
+
+使得一个对象既无法添加新属性，也无法删除旧属性
+
+## Object.freeze
+
+使得一个对象无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量
+
+## Object.preventExtensions
+
+使得一个对象无法再添加新的属性
