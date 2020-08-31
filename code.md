@@ -232,5 +232,60 @@ class LinkList {
 ## 双向链表
 
 ```js
-class Node {}
+class Node {
+  next = null
+  prev = null
+  constructor(key, value) {
+    this.key = key
+    this.value = value
+  }
+}
+
+class LinkList {
+  constructor() {
+    this.head = new Node('head')
+  }
+
+  find(key) {
+    let cur = this.head.next
+    while (cur) {
+      if (cur.key === key) {
+        return cur
+      }
+      cur = cur.next
+    }
+  }
+
+  insert(key, value, nodeKey) {
+    let newNode = new Node(key, value)
+    let node = this.find(nodeKey)
+    if (node) {
+      newNode.next = node.next
+      newNode.prev = node
+      node.next = newNode
+    } else {
+      let cur = this.head
+      while (cur.next) {
+        cur = cur.next
+      }
+      cur.next = newNode
+      newNode.prev = cur
+    }
+  }
+
+  remove(key) {
+    let node = this.find(key)
+    if (node) {
+      node.prev.next = node.next
+    }
+  }
+
+  dispay() {
+    let cur = this.head.next
+    while (cur) {
+      console.log(cur.key, cur.value)
+      cur = cur.next
+    }
+  }
+}
 ```
