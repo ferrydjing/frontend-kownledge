@@ -289,3 +289,29 @@ class LinkList {
   }
 }
 ```
+
+## 数组去重
+
+```js
+function Deduplication(arr) {
+  // 数组扁平化
+  var newArr = arr.toString().split(',')
+
+  // 去重
+  let resObj = {}
+  for (var i = 0, len = newArr.length; i < len; i++) {
+    resObj[newArr[i]] = true
+  }
+
+  var resArr = []
+  for (var i in resObj) {
+    resArr.push(+i)
+  }
+
+  // 排序
+  resArr.sort(function (a, b) {
+    return a - b
+  })
+  return resArr
+}
+```
